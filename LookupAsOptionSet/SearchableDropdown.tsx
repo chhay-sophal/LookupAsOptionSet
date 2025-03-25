@@ -42,7 +42,7 @@ export const SearchableDropdown: React.FunctionComponent<IDropdownProps> = props
                     <div style={checkmarkContainerStyle}>
                         {isSelected && <Icon iconName="CheckMark" style={checkmarkStyle} />}
                         {option?.data?.icon && (
-                            <Icon style={iconStyles} iconName={option.data.icon} aria-hidden="true" title={option.data.icon} />
+                            <Icon iconName={option.data.icon} aria-hidden="true" title={option.data.icon} />
                         )}
                     </div>
                     <span>{option?.text}</span>
@@ -56,8 +56,6 @@ export const SearchableDropdown: React.FunctionComponent<IDropdownProps> = props
 const optionContainerStyle = { display: 'flex', alignItems: 'center', gap: '8px' };
 const checkmarkContainerStyle = { minWidth: '14px' };
 const checkmarkStyle = { color: 'green', fontSize: '14px' };
-const iconStyles = { marginRight: '8px' };
-const italicStyle = { fontStyle: 'italic', align:'right' };
 
 export const DropdownStyle = (props: IDropdownStyleProps): Partial<IDropdownStyles> => ({
   ...(props.disabled ? {
@@ -74,7 +72,7 @@ export const DropdownStyle = (props: IDropdownStyleProps): Partial<IDropdownStyl
           }
       },
       caretDown: {
-          color: "transparent"
+          color: "rgb(96, 94, 92)"
       }
   }: {
       root: {
@@ -89,10 +87,7 @@ export const DropdownStyle = (props: IDropdownStyleProps): Partial<IDropdownStyl
           }
       },
       caretDown: {
-          color: "transparent",
-          ":hover": {
-              color: "rgb(96, 94, 92)"
-          }
+          color: "rgb(96, 94, 92)"
       },
       dropdown: {
           ":focus:after": {
