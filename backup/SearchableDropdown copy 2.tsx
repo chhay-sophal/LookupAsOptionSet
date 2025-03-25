@@ -52,11 +52,8 @@ export const SearchableDropdown: React.FunctionComponent<IDropdownProps> = props
 
     const filteredOptions = props.options.filter(option =>
         option.text.toLowerCase().includes(searchText.toLowerCase()) &&
-        !["divider", "new", "FilterHeader", "divider_filterHeader", "mru", "mru_divider1", "mru_divider2", "mru_divider3", "records_header", "favorite", "mru_divider4", "mru_divider5"].includes(option.key?.toString())
+        !["divider", "new", "FilterHeader", "mru", "favorite"].includes(option.key?.toString())
     );
-
-    const searchOption = props.options.find(option => option.key === 'FilterHeader');
-    const addNewOption = props.options.find(option => option.key === 'new');
 
     return (
         <div ref={dropdownRef} style={{ position: 'relative' }}>
@@ -64,6 +61,9 @@ export const SearchableDropdown: React.FunctionComponent<IDropdownProps> = props
                 {...props}
                 styles={DropdownStyle}
                 selectedKey={props.selectedKey}
+                onRenderCaretDown={() => (
+                    <Icon iconName="ChevronDown" />
+                )}
                 onClick={() => setIsCalloutVisible(!isCalloutVisible)}
                 onChange={(event, option) => {
                     if (option) {
@@ -84,10 +84,9 @@ export const SearchableDropdown: React.FunctionComponent<IDropdownProps> = props
                     {/* Search Box (Fixed Top) */}
                     <div style={searchContainerStyle}>
                         <SearchBox
-                            placeholder={searchOption?.data?.label}
+                            placeholder="Search..."
                             value={searchText}
-                            underlined={true}
-                            onChange={(ev, newValue) => setSearchText(newValue ?? "")}
+                            onChange={(_, newValue) => setSearchText(newValue || '')}
                         />
                     </div>
 
@@ -100,7 +99,7 @@ export const SearchableDropdown: React.FunctionComponent<IDropdownProps> = props
                                 onClick={(event: React.MouseEvent<HTMLDivElement>) => props.onChange?.(event as unknown as React.FormEvent<HTMLDivElement>, option)}
                             >
                                 <div style={checkmarkContainerStyle}>
-                                    {option.key === props.selectedKey && <Icon iconName="CheckMark" />}
+                                    {option.key === props.selectedKey && <Icon iconName="CheckMark" style={checkmarkStyle} />}
                                 </div>
                                 <span>{option.text}</span>
                             </div>
@@ -110,15 +109,9 @@ export const SearchableDropdown: React.FunctionComponent<IDropdownProps> = props
                     {/* Add New Button (Fixed Bottom) */}
                     <div 
                         style={addButtonContainerStyle}
-                        onClick={(event: React.MouseEvent<HTMLDivElement>) => props.onChange?.(event as unknown as React.FormEvent<HTMLDivElement>, addNewOption)}
+                        onClick={(event: React.MouseEvent<HTMLDivElement>) => props.onChange?.(event as unknown as React.FormEvent<HTMLDivElement>, { key: 'new', text: 'Add New' })}
                     >
-                        <div style={plusContainerStyle}>
-                            {addNewOption?.data?.icon && (
-                                <Icon iconName={addNewOption.data.icon} aria-hidden="true" title={addNewOption.data.icon} />
-                            )}
-                        </div>
-                        <span>Add new</span>
-                        {/* <span>{addNewOption?.text}</span> */}
+                        <DefaultButton text="+ Add new" onClick={() => alert('Add new clicked!')} />
                     </div>
                 </Callout>
             )}
@@ -139,13 +132,11 @@ const searchContainerStyle: React.CSSProperties = {
 const optionsContainerStyle: React.CSSProperties = {
     maxHeight: '200px',
     overflowY: 'auto',
-    backgroundColor: 'white',
+    backgroundColor: 'white'
 };
 
 const addButtonContainerStyle: React.CSSProperties = {
-    display: 'flex',
     padding: '8px',
-    gap: '8px',
     borderTop: '1px solid #ccc',
     backgroundColor: 'white',
     position: 'sticky',
@@ -153,10 +144,9 @@ const addButtonContainerStyle: React.CSSProperties = {
     zIndex: 10
 };
 
-const optionContainerStyle = { display: 'flex', alignItems: 'center', padding: '8px', cursor: 'pointer', gap: '8px' };
+const optionContainerStyle = { display: 'flex', alignItems: 'center', padding: '8px', cursor: 'pointer' };
 const checkmarkContainerStyle = { minWidth: '14px' };
-const plusContainerStyle = { minWidth: '14px' };
-// const checkmarkStyle = { color: 'green', fontSize: '14px' };
+const checkmarkStyle = { color: 'green', fontSize: '14px' };
 
 export const DropdownStyle = (props: IDropdownStyleProps): Partial<IDropdownStyles> => ({
     root: { width: "100%" },
