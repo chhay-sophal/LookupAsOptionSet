@@ -74,7 +74,7 @@
         <value>Filtering column</value>
     </data>
     <data name="dependantLookup_Desc_Key" xml:space="preserve">
-        <value>Set the Lookup column to use to filter this control. Must be the same Lookup than the one defined in this control filter configuration</value>
+        <value>Set the Lookup column to use to filter this control. Must be the same Lookup than the one defined in this control filter configuration.</value>
     </data>
     <data name="attributemask_Display_Key" xml:space="preserve">
         <value>Display mask</value>
@@ -86,19 +86,19 @@
         <value>Sort by display name</value>
     </data>
     <data name="sortByName_Desc_Key" xml:space="preserve">
-        <value>Indicates if sorting is based on display name or selected view order</value>
+        <value>Indicates if sorting is based on display name or selected view order.</value>
     </data>
     <data name="addNew_Display_Key" xml:space="preserve">
         <value>Allow record creation</value>
     </data>
     <data name="addNew_Desc_Key" xml:space="preserve">
-        <value>Allow user to create new records from the dropdown. Requires appropriate privileges</value>
+        <value>Allow user to create new records from the dropdown. Requires appropriate privileges.</value>
     </data>
     <data name="addSearch_Display_Key" xml:space="preserve">
         <value>Display Search bar</value>
     </data>
     <data name="addSearch_Desc_Key" xml:space="preserve">
-        <value>Indicates if a search bar must be added on top of the dropdown</value>
+        <value>Indicates if a search bar must be added on top of the dropdown.</value>
     </data>
     <data name="yes_Display_Key" xml:space="preserve">
         <value>Yes</value>
