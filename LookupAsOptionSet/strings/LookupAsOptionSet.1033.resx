@@ -80,7 +80,7 @@
         <value>Display mask</value>
     </data>
     <data name="attributemask_Desc_Key" xml:space="preserve">
-        <value>Mask that indicates which column to use for display. If empty, primary name of the table is used. Use logical name of the table.</value>
+        <value>Mask that indicates which column to use for display. If empty, primary name of the table is used. Use logical name of the column.</value>
     </data>
     <data name="sortByName_Display_Key" xml:space="preserve">
         <value>Sort by display name</value>
