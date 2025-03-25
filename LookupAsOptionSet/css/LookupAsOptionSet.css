@@ -1,0 +1,26 @@
+.custom-dropdown {
+    border-radius: 4px; /* Rounded corners */
+    background-color: #f5f5f5; /* Light gray background */
+    width: 100%; /* Full width */
+}
+
+.custom-dropdown .ms-Dropdown {
+    border: none !important; /* Remove default border */
+    background: transparent !important; /* Ensure background stays gray */
+}
+
+.custom-dropdown .ms-Dropdown-title {
+    border: none; /* Remove default border */
+    font-weight: 400 !important; /* Lighter font weight */
+    border-radius: 4px !important; /* Rounded corners */
+    background-color: #f5f5f5 !important; /* Light gray background */
+}
+
+.custom-dropdown .ms-Dropdown-items {
+    border-radius: 4px !important; /* Rounded corners */
+    background-color: #ffffff !important; /* White background */
+}
+
+.caretDown-325 .caretDown-574 .caretDown-593 {
+    color: rgb(97, 97, 97) !important; /* Dark gray color */
+}
