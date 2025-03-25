@@ -59,28 +59,46 @@
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
     <data name="Control_Display_Name_Key" xml:space="preserve">
-        <value>Lookup to Dropdown list</value>
+        <value>Lookup as OptionSet</value>
     </data>
     <data name="Control_Description_Key" xml:space="preserve">
-        <value>Displays Lookup column as a Dropdown list</value>
+        <value>Displays Lookup column as a OptionSet list</value>
     </data>
     <data name="lookup_Display_Key" xml:space="preserve">
         <value>Lookup column</value>
     </data>
     <data name="lookup_Desc_Key" xml:space="preserve">
-        <value>Lookup column this control is mapped to</value>
+        <value>Lookup column this control is mapped to.</value>
+    </data>
+    <data name="dependantLookup_Display_Key" xml:space="preserve">
+        <value>Filtering column</value>
+    </data>
+    <data name="dependantLookup_Desc_Key" xml:space="preserve">
+        <value>Set the Lookup column to use to filter this control. Must be the same Lookup than the one defined in this control filter configuration</value>
     </data>
     <data name="attributemask_Display_Key" xml:space="preserve">
         <value>Display mask</value>
     </data>
     <data name="attributemask_Desc_Key" xml:space="preserve">
-        <value>Mask that indicates which column to use for display. If empty, primary name of the table is used. Use code {lcid} to include user interface language code</value>
+        <value>Mask that indicates which column to use for display. If empty, primary name of the table is used. Use logical name of the table.</value>
     </data>
     <data name="sortByName_Display_Key" xml:space="preserve">
         <value>Sort by display name</value>
     </data>
     <data name="sortByName_Desc_Key" xml:space="preserve">
         <value>Indicates if sorting is based on display name or selected view order</value>
+    </data>
+    <data name="addNew_Display_Key" xml:space="preserve">
+        <value>Allow record creation</value>
+    </data>
+    <data name="addNew_Desc_Key" xml:space="preserve">
+        <value>Allow user to create new records from the dropdown. Requires appropriate privileges</value>
+    </data>
+    <data name="addSearch_Display_Key" xml:space="preserve">
+        <value>Display Search bar</value>
+    </data>
+    <data name="addSearch_Desc_Key" xml:space="preserve">
+        <value>Indicates if a search bar must be added on top of the dropdown</value>
     </data>
     <data name="yes_Display_Key" xml:space="preserve">
         <value>Yes</value>
@@ -97,43 +115,7 @@
     <data name="AddNew_Display_Key" xml:space="preserve">
         <value>Add new</value>
     </data>
-    <data name="addNew_Display_Key" xml:space="preserve">
-        <value>Allow record creation</value>
-    </data>
-    <data name="addNew_Desc_Key" xml:space="preserve">
-        <value>Allow user to create new records from the dropdown. Requires appropriate privileges</value>
-    </data>
-    <data name="dependantLookup_Display_Key" xml:space="preserve">
-        <value>Filtering column</value>
-    </data>
-    <data name="dependantLookup_Desc_Key" xml:space="preserve">
-        <value>Set the Lookup column to use to filter this control. Must be the same Lookup than the one defined in this control filter configuration</value>
-    </data>
-    <data name="addSearch_Display_Key" xml:space="preserve">
-        <value>Display Search bar</value>
-    </data>
-    <data name="recentItems" xml:space="preserve">
-        <value>Recent items</value>
-    </data>
     <data name="searchPlaceHolder" xml:space="preserve">
         <value>Search</value>
-    </data>
-    <data name="favorites" xml:space="preserve">
-        <value>Favorites</value>
-    </data>
-    <data name="favorites_Display_Key" xml:space="preserve">
-        <value>Favorites</value>
-    </data>
-    <data name="favorites_Desc_Key" xml:space="preserve">
-        <value>List of records unique identifiers to show as favorites</value>
-    </data>
-    <data name="mruSize_Display_Key" xml:space="preserve">
-        <value>Number of recent items</value>
-    </data>
-    <data name="mruSize_Desc_Key" xml:space="preserve">
-        <value>Indicates the number of recent items to display</value>
-    </data>
-    <data name="addSearch_Desc_Key" xml:space="preserve">
-        <value>Indicates if a search bar must be added on top of the dropdown</value>
     </data>
 </root>
