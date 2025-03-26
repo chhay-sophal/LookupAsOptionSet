@@ -18,6 +18,7 @@ export const SearchableDropdown: React.FunctionComponent<IDropdownProps> = (
     const [calloutDirection, setCalloutDirection] = React.useState<DirectionalHint>(
         DirectionalHint.bottomLeftEdge
     );
+    const [triggerWidth, setTriggerWidth] = React.useState<number>(0);
     const dropdownRef = React.useRef<HTMLDivElement>(null);
     const buttonRef = React.useRef<HTMLDivElement>(null);
     const dismissFlag = React.useRef<boolean>(false);
@@ -37,6 +38,12 @@ export const SearchableDropdown: React.FunctionComponent<IDropdownProps> = (
             dismissFlag.current = false;
         }, 200);
     };
+
+    React.useEffect(() => {
+        if (isCalloutVisible && buttonRef.current) {
+            setTriggerWidth(buttonRef.current.offsetWidth);
+        }
+    }, [isCalloutVisible]);
 
     const filteredOptions = props.options.filter(
         (option) =>
@@ -84,17 +91,19 @@ export const SearchableDropdown: React.FunctionComponent<IDropdownProps> = (
                     directionalHint={calloutDirection}
                     onDismiss={handleDismiss}
                     setInitialFocus
-                    styles={{ calloutMain: { padding: 0, minWidth: 200 } }}
+                    styles={{ calloutMain: { padding: 0, minWidth: triggerWidth } }}
                 >
-                    {/* Search Box (Fixed at Top) */}
-                    <div style={searchContainerStyle}>
-                        <SearchBox
-                            placeholder={searchOption?.data?.label}
-                            value={searchText}
-                            underlined={true}
-                            onChange={(ev, newValue) => setSearchText(newValue ?? "")}
-                        />
-                    </div>
+                    {/* Conditionally render Search Box (Fixed at Top) */}
+                    {searchOption && (
+                        <div style={searchContainerStyle}>
+                            <SearchBox
+                                placeholder={searchOption?.data?.label}
+                                value={searchText}
+                                underlined={true}
+                                onChange={(ev, newValue) => setSearchText(newValue ?? "")}
+                            />
+                        </div>
+                    )}
 
                     {/* Options List (Scrollable Middle) */}
                     <div style={optionsContainerStyle}>
@@ -118,25 +127,25 @@ export const SearchableDropdown: React.FunctionComponent<IDropdownProps> = (
                         ))}
                     </div>
 
-                    {/* Add New Button (Fixed at Bottom) */}
-                    <div
-                        style={addButtonContainerStyle}
-                    >
-                        <div
-                            style={addButtonStyle}
-                            onClick={(event: React.MouseEvent<HTMLDivElement>) => {
-                                props.onChange?.(event as unknown as React.FormEvent<HTMLDivElement>, addNewOption);
-                                setIsCalloutVisible(false);
-                            }}
-                        >
-                            <div style={plusContainerStyle}>
-                                {addNewOption?.data?.icon && (
-                                    <Icon iconName={addNewOption.data.icon} aria-hidden="true" title={addNewOption.data.icon} />
-                                )}
+                    {/* Conditionally render Add New Button (Fixed at Bottom) */}
+                    {addNewOption && (
+                        <div style={addButtonContainerStyle}>
+                            <div
+                                style={addButtonStyle}
+                                onClick={(event: React.MouseEvent<HTMLDivElement>) => {
+                                    props.onChange?.(event as unknown as React.FormEvent<HTMLDivElement>, addNewOption);
+                                    setIsCalloutVisible(false);
+                                }}
+                            >
+                                <div style={plusContainerStyle}>
+                                    {addNewOption?.data?.icon && (
+                                        <Icon iconName={addNewOption.data.icon} aria-hidden="true" title={addNewOption.data.icon} />
+                                    )}
+                                </div>
+                                <span>{addNewOption?.text}</span>
                             </div>
-                            <span>Add new</span>
                         </div>
-                    </div>
+                    )}
                 </Callout>
             )}
         </div>
