@@ -75,7 +75,8 @@ export const SearchableDropdown: React.FunctionComponent<IDropdownProps> = (
                 options={props.options}
                 selectedKey={props.selectedKey}
                 onChange={props.onChange}
-                style={{ marginRight: "7px" }}
+                styles={dropdownStyles}
+                style={{ paddingRight: "7px" }}
             />
         );
     }
@@ -166,6 +167,15 @@ export const SearchableDropdown: React.FunctionComponent<IDropdownProps> = (
 };
 
 // 🔹 Styling
+const dropdownStyles: Partial<IDropdownStyles> = {
+    root: {
+        outline: "none",
+    },
+    title: {
+        outline: "none",
+    },
+};
+
 const dropdownButtonStyle: React.CSSProperties = {
     display: "flex",
     justifyContent: "space-between",
