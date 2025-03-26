@@ -21,6 +21,11 @@ export const SearchableDropdown: React.FunctionComponent<IDropdownProps> = (
   const dropdownRef = React.useRef<HTMLDivElement>(null);
   const buttonRef = React.useRef<HTMLDivElement>(null);
 
+  const toggleDropdown = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    setIsCalloutVisible((prev) => !prev);
+  };
+
   React.useEffect(() => {
     const updatePosition = () => {
       if (buttonRef.current) {
@@ -94,10 +99,7 @@ export const SearchableDropdown: React.FunctionComponent<IDropdownProps> = (
       <div
         ref={buttonRef}
         style={dropdownButtonStyle}
-        onClick={(event) => {
-            event.stopPropagation(); // Prevents closing & reopening instantly
-            setIsCalloutVisible((prev) => !prev);
-        }}
+        onClick={toggleDropdown}
       >
         <span>
           {props.options.find((opt) => opt.key === props.selectedKey)?.text || "Select an option"}
@@ -113,7 +115,6 @@ export const SearchableDropdown: React.FunctionComponent<IDropdownProps> = (
           target={buttonRef.current}
           isBeakVisible={false}
           directionalHint={calloutDirection}
-          onDismiss={() => setIsCalloutVisible(false)}
           setInitialFocus
           styles={{ calloutMain: { padding: 0, minWidth: 200 } }}
         >
