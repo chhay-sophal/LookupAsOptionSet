@@ -36,7 +36,7 @@ export const SearchableDropdown: React.FunctionComponent<IDropdownProps> = (
         setIsCalloutVisible(false);
         setTimeout(() => {
             dismissFlag.current = false;
-        }, 200);
+        }, 300);
     };
 
     React.useEffect(() => {
@@ -65,21 +65,20 @@ export const SearchableDropdown: React.FunctionComponent<IDropdownProps> = (
     );
 
     const searchOption = props.options.find((option) => option.key === "FilterHeader");
-    const addNewOption = props.options.find((option) => option.key === "new");
 
-    if (!searchOption && !addNewOption) {
-        // Render built-in Fluent UI Dropdown if neither searchOption nor addNewOption exists
-        return (
-            <Dropdown
-                {...props}
-                options={props.options}
-                selectedKey={props.selectedKey}
-                onChange={props.onChange}
-                styles={dropdownStyles}
-                style={{ paddingRight: "7px" }}
-            />
-        );
-    }
+    // if (!searchOption) {
+    //     // Render built-in Fluent UI Dropdown if neither searchOption nor addNewOption exists
+    //     return (
+    //         <Dropdown
+    //             {...props}
+    //             options={props.options}
+    //             selectedKey={props.selectedKey}
+    //             onChange={props.onChange}
+    //             styles={dropdownStyles}
+    //             style={{ paddingRight: "7px" }}
+    //         />
+    //     );
+    // }
 
     return (
         <div ref={dropdownRef} style={{ position: "relative" }}>
@@ -140,26 +139,6 @@ export const SearchableDropdown: React.FunctionComponent<IDropdownProps> = (
                             </div>
                         ))}
                     </div>
-
-                    {/* Conditionally render Add New Button (Fixed at Bottom) */}
-                    {addNewOption && (
-                        <div style={addButtonContainerStyle}>
-                            <div
-                                style={addButtonStyle}
-                                onClick={(event: React.MouseEvent<HTMLDivElement>) => {
-                                    props.onChange?.(event as unknown as React.FormEvent<HTMLDivElement>, addNewOption);
-                                    setIsCalloutVisible(false);
-                                }}
-                            >
-                                <div style={plusContainerStyle}>
-                                    {addNewOption?.data?.icon && (
-                                        <Icon iconName={addNewOption.data.icon} aria-hidden="true" title={addNewOption.data.icon} />
-                                    )}
-                                </div>
-                                <span>{addNewOption?.text}</span>
-                            </div>
-                        </div>
-                    )}
                 </Callout>
             )}
         </div>
@@ -167,15 +146,6 @@ export const SearchableDropdown: React.FunctionComponent<IDropdownProps> = (
 };
 
 // 🔹 Styling
-const dropdownStyles: Partial<IDropdownStyles> = {
-    root: {
-        outline: "none",
-    },
-    title: {
-        outline: "none",
-    },
-};
-
 const dropdownButtonStyle: React.CSSProperties = {
     display: "flex",
     justifyContent: "space-between",
@@ -199,25 +169,6 @@ const optionsContainerStyle: React.CSSProperties = {
     backgroundColor: "white",
 };
 
-const addButtonContainerStyle: React.CSSProperties = {
-    display: "flex",
-    padding: "8px",
-    gap: "8px",
-    borderTop: "1px solid #ccc",
-    backgroundColor: "white",
-    position: "sticky",
-    bottom: 0,
-    zIndex: 10,
-};
-
-const addButtonStyle: React.CSSProperties = {
-    display: "flex",
-    borderRadius: "4px",
-    backgroundColor: "#f4f4f4",
-    padding: "5px",
-    cursor: "pointer",
-};
-
 const optionContainerStyle = {
     display: "flex",
     alignItems: "center",
@@ -228,4 +179,3 @@ const optionContainerStyle = {
 
 const chevronDownContainerStyle = { display: "flex", justifyContent: "center", alignItems: "center" };
 const checkmarkContainerStyle = { minWidth: "14px" };
-const plusContainerStyle = { minWidth: "14px" };

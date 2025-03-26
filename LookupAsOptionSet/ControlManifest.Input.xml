@@ -8,10 +8,6 @@
       <value name="Yes" display-name-key="yes_Display_Key" description-key="yes_Desc_Key">1</value>
       <value name="No" display-name-key="no_Display_Key" description-key="no_Desc_Key">0</value>
     </property>
-    <property name="addNew" display-name-key="addNew_Display_Key" description-key="addNew_Desc_Key" of-type="Enum" default-value="0" usage="input" required="true">
-      <value name="Yes" display-name-key="yes_Display_Key" description-key="yes_Desc_Key">1</value>
-      <value name="No" display-name-key="no_Display_Key" description-key="no_Desc_Key">0</value>
-    </property>
     <property name="addSearch" display-name-key="addSearch_Display_Key" description-key="addSearch_Desc_Key" of-type="Enum" default-value="0" usage="input" required="true">
       <value name="Yes" display-name-key="yes_Display_Key" description-key="yes_Desc_Key">1</value>
       <value name="No" display-name-key="no_Display_Key" description-key="no_Desc_Key">0</value>

@@ -15,7 +15,6 @@ export class LookupAsOptionSet implements ComponentFramework.StandardControl<IIn
     private entityDisplayName: string;
     private viewId: string;
     private availableOptions: IDropdownOption[];
-    private actionOptions: IDropdownOption[];
     private currentValue?: ComponentFramework.LookupValue[];
     private newlyCreatedId: string|null;
     private parentId: string|null;
@@ -50,20 +49,6 @@ export class LookupAsOptionSet implements ComponentFramework.StandardControl<IIn
             this.entityIdFieldName = metadata.PrimaryIdAttribute
             this.entityNameFieldName = metadata.PrimaryNameAttribute
             this.entityDisplayName = metadata.DisplayName;
-            
-            // Add items to add a new record
-            this.actionOptions = new Array<IDropdownOption>();
-            this.actionOptions.push({
-                key:"divider",
-                text:"",
-                itemType: DropdownMenuItemType.Divider
-            });
-            this.actionOptions.push({
-                key:"new",
-                text:context.resources.getString("AddNew_Display_Key") + " " + this.entityDisplayName,
-                itemType: DropdownMenuItemType.Normal,
-                data:{icon:"Add", isMenu:true}
-            });
 
             return this.retrieveRecords();
         }).catch(error => {
@@ -211,14 +196,6 @@ export class LookupAsOptionSet implements ComponentFramework.StandardControl<IIn
         ] : [];
 
         const options = [...searchOptions,{key: '---', text:'---'},...this.availableOptions];
-        if(this._context.parameters.addNew.raw === "1")
-        {
-            // If rights to read and create entity
-            if(this._context.utils.hasEntityPrivilege(this.entityName, 1, 0)
-            && this._context.utils.hasEntityPrivilege(this.entityName, 2, 0)){
-                options.push(...this.actionOptions);
-            }
-        }
 
         const recordSelector = React.createElement("div", { className: "custom-dropdown" },
             React.createElement(SearchableDropdown, {
@@ -226,24 +203,7 @@ export class LookupAsOptionSet implements ComponentFramework.StandardControl<IIn
                 options: options,
                 isDisabled: context.mode.isControlDisabled,
                 onChange: (event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption, index?: number) => {
-                    if (option?.key === "new") {
-                        context.navigation.openForm({
-                            entityName: this.entityName,
-                            useQuickCreateForm: true,
-                            windowPosition: 2
-                        }).then((result) => {
-                            if (result.savedEntityReference?.length > 0) {
-                                this.newlyCreatedId = result.savedEntityReference[0].id.replace('{', '').replace('}', '').toLowerCase();
-                            }
-                            return this.retrieveRecords();
-                        }).then(() => {
-                            this.renderControl(context);
-                            return;
-                        }).catch(error => {
-                            console.error(error);
-                        });
-                    }
-                    else if (typeof option === 'undefined' || option.key === '---') {
+                    if (typeof option === 'undefined' || option.key === '---') {
                         this.currentValue = undefined;
                         this.notifyOutputChanged();
                     } else {
