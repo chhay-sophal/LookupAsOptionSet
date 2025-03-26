@@ -67,6 +67,19 @@ export const SearchableDropdown: React.FunctionComponent<IDropdownProps> = (
     const searchOption = props.options.find((option) => option.key === "FilterHeader");
     const addNewOption = props.options.find((option) => option.key === "new");
 
+    if (!searchOption && !addNewOption) {
+        // Render built-in Fluent UI Dropdown if neither searchOption nor addNewOption exists
+        return (
+            <Dropdown
+                {...props}
+                options={props.options}
+                selectedKey={props.selectedKey}
+                onChange={props.onChange}
+                style={{ marginRight: "7px" }}
+            />
+        );
+    }
+
     return (
         <div ref={dropdownRef} style={{ position: "relative" }}>
             {/* Custom Dropdown Trigger */}
