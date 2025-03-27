@@ -2,7 +2,7 @@
 
 ## Overview
 
-The LookupAsOptionSet control is a custom PowerApps Component Framework (PCF) control that displays a Lookup column as an OptionSet list. This control allows users to select from a list of options, filter options based on another Lookup column, and create new records directly from the dropdown.
+The LookupAsOptionSet control is a custom PowerApps Component Framework (PCF) control that displays a Lookup column as an OptionSet list. This control allows users to select from a list of options and filter options based on another Lookup column. 
 
 ## Features
 
@@ -10,7 +10,6 @@ The LookupAsOptionSet control is a custom PowerApps Component Framework (PCF) co
 - **Filtering**: Allows filtering of options based on another Lookup column.
 - **Custom Display Mask**: Allows customization of the column used for display.
 - **Sorting**: Options can be sorted by display name or view order.
-- **Record Creation**: Users can create new records directly from the dropdown if they have the appropriate privileges.
 - **Search Bar**: An optional search bar can be added to the dropdown for filtering options.
 
 ## Properties
@@ -55,19 +54,6 @@ The LookupAsOptionSet control is a custom PowerApps Component Framework (PCF) co
   - Yes (1)
   - No (0)
 
-### Allow Record Creation
-
-- **Name**: addNew
-- **Display Name Key**: addNew_Display_Key
-- **Description Key**: addNew_Desc_Key
-- **Type**: Enum
-- **Default Value**: 0
-- **Usage**: input
-- **Required**: true
-- **Values**:
-  - Yes (1)
-  - No (0)
-
 ### Display Search Bar
 
 - **Name**: addSearch
@@ -103,7 +89,6 @@ The LookupAsOptionSet control is a custom PowerApps Component Framework (PCF) co
    - **Filtering Column**: (Optional) Select the Lookup column to use for filtering.
    - **Display Mask**: (Optional) Enter the display mask for the column.
    - **Sort by Display Name**: Choose whether to sort by display name or view order.
-   - **Allow Record Creation**: Choose whether to allow users to create new records from the dropdown.
    - **Display Search Bar**: Choose whether to display a search bar on top of the dropdown.
 8. Click on **OK** to save the control settings.
 9. Save and publish the form.
@@ -122,5 +107,4 @@ Here is an example configuration for the LookupAsOptionSet control in the form e
 - **Filtering Column**: AccountId
 - **Display Mask**: fullname
 - **Sort by Display Name**: Yes
-- **Allow Record Creation**: Yes
 - **Display Search Bar**: Yes
