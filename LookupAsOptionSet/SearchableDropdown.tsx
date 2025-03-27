@@ -120,7 +120,7 @@ const styles = {
         height: "32px",
     } as React.CSSProperties,
     searchContainer: {
-        padding: "8px",
+        padding: "5px",
         borderBottom: "1px solid #ccc",
         backgroundColor: "white",
         position: "sticky",
@@ -128,7 +128,7 @@ const styles = {
         zIndex: 10,
     } as React.CSSProperties,
     optionsContainer: {
-        maxHeight: "200px",
+        maxHeight: "300px",
         overflowY: "auto",
         backgroundColor: "white",
     } as React.CSSProperties,
