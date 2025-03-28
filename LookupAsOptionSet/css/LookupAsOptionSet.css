@@ -20,3 +20,8 @@
     border-radius: 4px !important; /* Rounded corners */
     background-color: #ffffff !important; /* White background */
 }
+
+.custom-fallback {
+    font-weight: bold;
+    padding-right: 5px;
+}

@@ -24,6 +24,20 @@ export class LookupAsOptionSet implements ComponentFramework.StandardControl<IIn
     }
 
     /**
+     * Renders a fallback UI when the lookup entity name is missing.
+     */
+    private renderFallback(): void {
+        const fallbackElement = React.createElement(
+            "div", 
+            { 
+                className: "fallback-message",
+            }, 
+            "---"
+        );
+        ReactDom.render(fallbackElement, this.container);
+    }    
+
+    /**
      * Used to initialize the control instance. Controls can kick off remote server calls and other initialization actions here.
      * Data-set values are not initialized here, use updateView.
      * @param context The entire property bag available to control via Context Object; It contains values as set up by the customizer mapped to property names defined in the manifest, as well as utility functions.
@@ -37,23 +51,35 @@ export class LookupAsOptionSet implements ComponentFramework.StandardControl<IIn
         state: ComponentFramework.Dictionary,
         container: HTMLDivElement
     ): void {
-        this._context = context;
-        this.container = container
-        this.notifyOutputChanged = notifyOutputChanged
-
-        this.entityName = context.parameters.lookup.getTargetEntityType()
-        this.viewId = context.parameters.lookup.getViewId();
-
-        context.utils.getEntityMetadata(this.entityName).then(metadata => {
-                        
-            this.entityIdFieldName = metadata.PrimaryIdAttribute
-            this.entityNameFieldName = metadata.PrimaryNameAttribute
-            this.entityDisplayName = metadata.DisplayName;
-
-            return this.retrieveRecords();
-        }).catch(error => {
-            console.error(error);
-        });
+        try{
+            this._context = context;
+            this.container = container
+            this.notifyOutputChanged = notifyOutputChanged
+    
+            this.entityName = context.parameters.lookup.getTargetEntityType()
+            this.viewId = context.parameters.lookup.getViewId();
+    
+            if (!this.entityName) {
+                console.warn("Lookup entity name is missing, displaying fallbak UI.")
+                this.renderFallback();
+                return;
+            }
+    
+            context.utils.getEntityMetadata(this.entityName).then(metadata => {
+                            
+                this.entityIdFieldName = metadata.PrimaryIdAttribute
+                this.entityNameFieldName = metadata.PrimaryNameAttribute
+                this.entityDisplayName = metadata.DisplayName;
+    
+                return this.retrieveRecords();
+            }).catch(error => {
+                console.error("Metadata fetch error:", error);
+                this.renderFallback();
+            });
+        } catch (error) {
+            console.error("Init error:", error);
+            this.renderFallback();
+        }
     }
 
     private async retrieveRecords(){
@@ -150,19 +176,24 @@ export class LookupAsOptionSet implements ComponentFramework.StandardControl<IIn
      * @param context The entire property bag available to control via Context Object; It contains values as set up by the customizer mapped to names defined in the manifest, as well as utility functions
      */
     public updateView(context: ComponentFramework.Context<IInputs>): void {
-        if(context.updatedProperties.includes("dependantLookup")){
-            const newParentId = context.parameters.dependantLookup.raw.length > 0 ? context.parameters.dependantLookup.raw[0].id : null;
-            if(newParentId !== this.parentId){
-                this.parentId = newParentId;
-                this.currentValue = undefined;
-                this.notifyOutputChanged();
-                this.retrieveRecords().catch(error => {
-                    console.error(error);
-                });
+        try {
+            if(context.updatedProperties.includes("dependantLookup")){
+                const newParentId = context.parameters.dependantLookup.raw.length > 0 ? context.parameters.dependantLookup.raw[0].id : null;
+                if(newParentId !== this.parentId){
+                    this.parentId = newParentId;
+                    this.currentValue = undefined;
+                    this.notifyOutputChanged();
+                    this.retrieveRecords().catch(error => {
+                        console.error(error);
+                    });
+                }
             }
-        }
-        else if(context.updatedProperties.includes("lookup")){
-            this.renderControl(context);
+            else if(context.updatedProperties.includes("lookup")){
+                this.renderControl(context);
+            }
+        } catch (error) {
+            console.error("UpdateView error:", error);
+            this.renderFallback();
         }
     }
 
