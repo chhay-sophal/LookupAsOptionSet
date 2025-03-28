@@ -115,9 +115,10 @@ const styles = {
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        padding: "0px 14px 0px 12px",
+        padding: "5px 14px 5px 12px",
         cursor: "pointer",
-        height: "32px",
+        lineHeight: "1.5",
+        wordBreak: "break-word"
     } as React.CSSProperties,
     searchContainer: {
         padding: "5px",
