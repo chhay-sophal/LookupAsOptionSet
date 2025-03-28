@@ -30,7 +30,7 @@ export class LookupAsOptionSet implements ComponentFramework.StandardControl<IIn
         const fallbackElement = React.createElement(
             "div", 
             { 
-                className: "fallback-message",
+                className: "custom-fallback",
             }, 
             "---"
         );
