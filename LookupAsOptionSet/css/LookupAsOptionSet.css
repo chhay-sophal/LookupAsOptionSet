@@ -22,6 +22,6 @@
 }
 
 .custom-fallback {
-    font-weight: bold;
-    padding-right: 5px;
+    font-weight: bold !important;
+    padding-right: 5px !important;
 }
