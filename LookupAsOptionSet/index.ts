@@ -97,32 +97,65 @@ export class LookupAsOptionSet implements ComponentFramework.StandardControl<IIn
             const view = result.entities[0];
             let xml = view.fetchxml;
 
-            if (this._context.parameters.dependantLookup && this._context.parameters.dependantLookup.raw && this._context.parameters.dependantLookup.raw.length > 0){
+            if (
+                this._context.parameters.dependantLookup &&
+                this._context.parameters.dependantLookup.raw &&
+                this._context.parameters.dependantLookup.raw.length > 0
+            ) {
                 const dependentId = this._context.parameters.dependantLookup.raw[0].id;
                 const attributeName = this._context.parameters.dependantLookup.attributes?.LogicalName ?? "";
-
+            
                 const parser = new DOMParser();
                 const xmlDoc = parser.parseFromString(xml, "text/xml");
-
                 const entityNode = xmlDoc.getElementsByTagName("entity")[0];
-                const filterNodes = entityNode.getElementsByTagName("filter");
-                let filterNode;
-                if(filterNodes.length == 0){
-                    filterNode = xmlDoc.createElement("filter");
-                    entityNode.appendChild(filterNode);
+            
+                if (this._context.parameters.intersectEntityName.raw && this._context.parameters.intersectToAttribute.raw) {
+                    const intersectEntityName = this._context.parameters.intersectEntityName.raw ?? "";
+                    const toAttr = this._context.parameters.intersectToAttribute.raw ?? "";
+            
+                    console.debug("Using N:N filtering");
+                    console.debug("Intersect Entity:", intersectEntityName);
+                    console.log("From:", this.entityIdFieldName, "| To:", toAttr);
+            
+                    const linkEntity = xmlDoc.createElement("link-entity");
+                    linkEntity.setAttribute("name", intersectEntityName);
+                    linkEntity.setAttribute("from", this.entityIdFieldName);
+                    linkEntity.setAttribute("to", this.entityIdFieldName);
+                    linkEntity.setAttribute("link-type", "inner");
+                    linkEntity.setAttribute("alias", "link1");
+            
+                    const condition = xmlDoc.createElement("condition");
+                    condition.setAttribute("attribute", toAttr);
+                    condition.setAttribute("operator", "eq");
+                    condition.setAttribute("value", dependentId);
+            
+                    const linkFilter = xmlDoc.createElement("filter");
+                    linkFilter.setAttribute("type", "and");
+                    linkFilter.appendChild(condition);
+                    linkEntity.appendChild(linkFilter);
+                    entityNode.appendChild(linkEntity);
+            
+                    console.debug("Added N:N <link-entity>: ", linkEntity.outerHTML);
+                } else {
+                    console.debug("Using 1:N filtering");
+            
+                    const filterNodes = entityNode.getElementsByTagName("filter");
+                    const filterNode = filterNodes.length === 0 ? xmlDoc.createElement("filter") : filterNodes[0];
+                    if (filterNodes.length === 0) {
+                        entityNode.appendChild(filterNode);
+                    }
+            
+                    const conditionNode = xmlDoc.createElement("condition");
+                    conditionNode.setAttribute("attribute", attributeName);
+                    conditionNode.setAttribute("operator", "eq");
+                    conditionNode.setAttribute("value", dependentId);
+                    filterNode.appendChild(conditionNode);
+            
+                    console.debug("Added 1:N <condition>: ", conditionNode.outerHTML);
                 }
-                else{
-                    filterNode = filterNodes[0];
-                }
-
-                // adding condition
-                const conditionNode = xmlDoc.createElement("condition");
-                conditionNode.setAttribute("attribute", attributeName);
-                conditionNode.setAttribute("operator", "eq");
-                conditionNode.setAttribute("value", dependentId);
-                filterNode.appendChild(conditionNode);
-
+            
                 xml = xmlDoc.documentElement.outerHTML;
+                console.debug("Final FetchXML after filtering:", xml);
             }
 
             // Ensure localized attribute name is included

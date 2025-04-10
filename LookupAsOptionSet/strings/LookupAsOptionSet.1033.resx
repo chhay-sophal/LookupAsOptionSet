@@ -70,6 +70,18 @@
     <data name="lookup_Desc_Key" xml:space="preserve">
         <value>Lookup column this control is mapped to.</value>
     </data>
+    <data name="intersectEntityName_Display_Key" xml:space="preserve">
+        <value>Intersect Entity Name</value>
+    </data>
+    <data name="intersectEntityName_Desc_Key" xml:space="preserve">
+        <value>Provide the name of the entity that links the two tables in this Many-to-Many relationship.</value>
+    </data>
+    <data name="intersectToAttribute_Display_Key" xml:space="preserve">
+        <value>Intersect To Attribute</value>
+    </data>
+    <data name="intersectToAttribute_Desc_Key" xml:space="preserve">
+        <value>Specify the attribute that acts as the endpoint in the linking entity.</value>
+    </data>
     <data name="dependantLookup_Display_Key" xml:space="preserve">
         <value>Filtering column</value>
     </data>

@@ -3,6 +3,8 @@
   <control namespace="CRMCrate.LookupAsOptionSet" constructor="LookupAsOptionSet" version="0.0.1" display-name-key="Control_Display_Name_Key" description-key="Control_Description_Key" control-type="standard" >
     <property name="lookup" display-name-key="lookup_Display_Key" description-key="lookup_Desc_Key" of-type="Lookup.Simple" usage="bound" required="true" />
     <property name="dependantLookup" display-name-key="dependantLookup_Display_Key" description-key="dependantLookup_Desc_Key" of-type="Lookup.Simple" usage="bound" required="false" />
+    <property name="intersectEntityName" display-name-key="intersectEntityName_Display_Key" description-key="intersectEntityName_Desc_Key" of-type="SingleLine.Text" usage="input" required="false" />
+    <property name="intersectToAttribute" display-name-key="intersectToAttribute_Display_Key" description-key="intersectToAttribute_Desc_Key" of-type="SingleLine.Text" usage="input" required="false" />
     <property name="attributemask" display-name-key="attributemask_Display_Key" description-key="attributemask_Desc_Key" of-type="SingleLine.Text" usage="input" required="false" />
     <property name="sortByName" display-name-key="sortByName_Display_Key" description-key="sortByName_Desc_Key" of-type="Enum" default-value="0" usage="input" required="true">
       <value name="Yes" display-name-key="yes_Display_Key" description-key="yes_Desc_Key">1</value>
