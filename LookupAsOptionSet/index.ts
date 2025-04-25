@@ -5,7 +5,7 @@ import { DropdownMenuItemType, IDropdownOption } from '@fluentui/react/lib/Dropd
 import { SearchableDropdown } from './SearchableDropdown'
 
 export class LookupAsOptionSet implements ComponentFramework.StandardControl<IInputs, IOutputs> {
-    
+
     private _context: ComponentFramework.Context<IInputs>;
     private container: HTMLDivElement;
     private notifyOutputChanged: () => void;
@@ -16,26 +16,28 @@ export class LookupAsOptionSet implements ComponentFramework.StandardControl<IIn
     private viewId: string;
     private availableOptions: IDropdownOption[];
     private currentValue?: ComponentFramework.LookupValue[];
-    private newlyCreatedId: string|null;
-    private parentId: string|null;
+    private newlyCreatedId: string | null;
+    private parentId: string | null;
+    private selectedValue?: ComponentFramework.LookupValue[];
 
     constructor() {
-        // Empty
+        // Empty constructor 
     }
 
     /**
      * Renders a fallback UI when the lookup entity name is missing.
      */
     private renderFallback(): void {
+        console.warn("Rendering fallback UI due to missing entity name.");
         const fallbackElement = React.createElement(
-            "div", 
-            { 
+            "div",
+            {
                 className: "custom-fallback",
-            }, 
+            },
             "---"
         );
         ReactDom.render(fallbackElement, this.container);
-    }    
+    }
 
     /**
      * Used to initialize the control instance. Controls can kick off remote server calls and other initialization actions here.
@@ -51,49 +53,56 @@ export class LookupAsOptionSet implements ComponentFramework.StandardControl<IIn
         state: ComponentFramework.Dictionary,
         container: HTMLDivElement
     ): void {
-        try{
+        try {
             this._context = context;
             this.container = container
             this.notifyOutputChanged = notifyOutputChanged
-    
-            this.entityName = context.parameters.lookup.getTargetEntityType()
-            this.viewId = context.parameters.lookup.getViewId();
-    
+
+            this.entityName = this._context.parameters.lookup.getTargetEntityType()
+            this.viewId = this._context.parameters.lookup.getViewId();
+
+            this.currentValue = this._context.parameters.lookup.raw;
+            this.selectedValue = this._context.parameters.lookup.raw;
+
             if (!this.entityName) {
-                console.warn("Lookup entity name is missing, displaying fallbak UI.")
+                console.warn("Lookup entity name is missing, displaying fallback UI.")
                 this.renderFallback();
                 return;
             }
-    
-            context.utils.getEntityMetadata(this.entityName).then(metadata => {
-                            
+
+            this._context.utils.getEntityMetadata(this.entityName).then(metadata => {
                 this.entityIdFieldName = metadata.PrimaryIdAttribute
                 this.entityNameFieldName = metadata.PrimaryNameAttribute
                 this.entityDisplayName = metadata.DisplayName;
-    
-                return this.retrieveRecords();
+
+                this.retrieveRecords(); // Calling retrieveRecords without async
+                return true;
             }).catch(error => {
                 console.error("Metadata fetch error:", error);
                 this.renderFallback();
+                throw error;
             });
+
         } catch (error) {
             console.error("Init error:", error);
             this.renderFallback();
         }
     }
 
-    private async retrieveRecords(){
+    /**
+     * Retrieve records based on the FetchXML query.
+     */
+    private retrieveRecords(): void {
+
         let filter = "";
-        if(this.viewId){
+        if (this.viewId) {
             filter = "?$top=1&$select=fetchxml,returnedtypecode&$filter=savedqueryid eq " + this.viewId;
-        }
-        else{
+        } else {
             filter = "?$top=1&$select=fetchxml,returnedtypecode&$filter=returnedtypecode eq '" + this.entityName + "' and querytype eq 64";
         }
 
-        try {
-            // Retrieve FetchXML query
-            const result = await this._context.webAPI.retrieveMultipleRecords('savedquery', filter);
+        // Retrieve FetchXML query
+        this._context.webAPI.retrieveMultipleRecords('savedquery', filter).then(result => {
             const view = result.entities[0];
             let xml = view.fetchxml;
 
@@ -104,61 +113,60 @@ export class LookupAsOptionSet implements ComponentFramework.StandardControl<IIn
             ) {
                 const dependentId = this._context.parameters.dependantLookup.raw[0].id;
                 const attributeName = this._context.parameters.dependantLookup.attributes?.LogicalName ?? "";
-            
+
                 const parser = new DOMParser();
                 const xmlDoc = parser.parseFromString(xml, "text/xml");
                 const entityNode = xmlDoc.getElementsByTagName("entity")[0];
-            
+
                 if (this._context.parameters.intersectEntityName.raw && this._context.parameters.intersectToAttribute.raw) {
                     const intersectEntityName = this._context.parameters.intersectEntityName.raw ?? "";
                     const toAttr = this._context.parameters.intersectToAttribute.raw ?? "";
-            
+
                     console.debug("Using N:N filtering");
                     console.debug("Intersect Entity:", intersectEntityName);
                     console.log("From:", this.entityIdFieldName, "| To:", toAttr);
-            
+
                     const linkEntity = xmlDoc.createElement("link-entity");
                     linkEntity.setAttribute("name", intersectEntityName);
                     linkEntity.setAttribute("from", this.entityIdFieldName);
                     linkEntity.setAttribute("to", this.entityIdFieldName);
                     linkEntity.setAttribute("link-type", "inner");
                     linkEntity.setAttribute("alias", "link1");
-            
+
                     const condition = xmlDoc.createElement("condition");
                     condition.setAttribute("attribute", toAttr);
                     condition.setAttribute("operator", "eq");
                     condition.setAttribute("value", dependentId);
-            
+
                     const linkFilter = xmlDoc.createElement("filter");
                     linkFilter.setAttribute("type", "and");
                     linkFilter.appendChild(condition);
                     linkEntity.appendChild(linkFilter);
                     entityNode.appendChild(linkEntity);
-            
+
                     console.debug("Added N:N <link-entity>: ", linkEntity.outerHTML);
                 } else {
                     console.debug("Using 1:N filtering");
-            
+
                     const filterNodes = entityNode.getElementsByTagName("filter");
                     const filterNode = filterNodes.length === 0 ? xmlDoc.createElement("filter") : filterNodes[0];
                     if (filterNodes.length === 0) {
                         entityNode.appendChild(filterNode);
                     }
-            
+
                     const conditionNode = xmlDoc.createElement("condition");
                     conditionNode.setAttribute("attribute", attributeName);
                     conditionNode.setAttribute("operator", "eq");
                     conditionNode.setAttribute("value", dependentId);
                     filterNode.appendChild(conditionNode);
-            
+
                     console.debug("Added 1:N <condition>: ", conditionNode.outerHTML);
                 }
-            
+
                 xml = xmlDoc.documentElement.outerHTML;
                 console.debug("Final FetchXML after filtering:", xml);
             }
 
-            // Ensure localized attribute name is included
             const mask = this._context.parameters.attributemask.raw;
             const localizedEntityFieldName = mask ? mask.replace('{lcid}', this._context.userSettings.languageId.toString()) : "";
 
@@ -167,7 +175,6 @@ export class LookupAsOptionSet implements ComponentFramework.StandardControl<IIn
                 const xmlDoc = parser.parseFromString(xml, "text/xml");
                 const entityNode = xmlDoc.getElementsByTagName("entity")[0];
 
-                // Check if attribute is already included in FetchXML
                 const existingAttribute = Array.from(entityNode.getElementsByTagName("attribute"));
                 const attributeExists = existingAttribute.some(attr => attr.getAttribute("name") === localizedEntityFieldName);
 
@@ -180,28 +187,32 @@ export class LookupAsOptionSet implements ComponentFramework.StandardControl<IIn
                 xml = xmlDoc.documentElement.outerHTML;
             }
 
-            // Retrieve records using FetchXML
-            const recordResult = await this._context.webAPI.retrieveMultipleRecords(view.returnedtypecode, '?fetchXml=' + xml);
+            this._context.webAPI.retrieveMultipleRecords(view.returnedtypecode, '?fetchXml=' + xml).then(recordResult => {
+                this.availableOptions = recordResult.entities.map(r => {
+                    let localizedEntityFieldName = "";
+                    const mask = this._context.parameters.attributemask.raw;
 
-            this.availableOptions = recordResult.entities.map(r => {
-                let localizedEntityFieldName = "";
-                const mask = this._context.parameters.attributemask.raw;
+                    if (mask) {
+                        localizedEntityFieldName = mask.replace('{lcid}', this._context.userSettings.languageId.toString());
+                    }
 
-                if(mask){
-                    localizedEntityFieldName = mask.replace('{lcid}', this._context.userSettings.languageId.toString());
-                }
+                    return {
+                        key: r[this.entityIdFieldName],
+                        text: (r[localizedEntityFieldName] ? r[localizedEntityFieldName] : r[this.entityNameFieldName]) ?? 'Display Name is not available'
+                    };
+                });
 
-                return {
-                    key: r[this.entityIdFieldName],
-                    text: (r[localizedEntityFieldName] ? r[localizedEntityFieldName] : r[this.entityNameFieldName]) ?? 'Display Name is not available'
-                };
+                this.renderControl(this._context);
+                return true;
+            }).catch(error => {
+                console.error("Error retrieving records:", error);
+                throw error;
             });
-
-            this.renderControl(this._context);
-        } catch (error) {
-            console.error("Error retrieving FetchXML records: ", error);
+            return true;
+        }).catch(error => {
+            console.error("Error retrieving FetchXML query:", error);
             throw error;
-        }
+        });
     }
 
     /**
@@ -210,18 +221,15 @@ export class LookupAsOptionSet implements ComponentFramework.StandardControl<IIn
      */
     public updateView(context: ComponentFramework.Context<IInputs>): void {
         try {
-            if(context.updatedProperties.includes("dependantLookup")){
+            if (context.updatedProperties.includes("dependantLookup")) {
                 const newParentId = context.parameters.dependantLookup.raw.length > 0 ? context.parameters.dependantLookup.raw[0].id : null;
-                if(newParentId !== this.parentId){
+                if (newParentId !== this.parentId) {
                     this.parentId = newParentId;
                     this.currentValue = undefined;
                     this.notifyOutputChanged();
-                    this.retrieveRecords().catch(error => {
-                        console.error(error);
-                    });
+                    this.retrieveRecords(); // Fetch data in order after condition update
                 }
-            }
-            else if(context.updatedProperties.includes("lookup")){
+            } else if (context.updatedProperties.includes("lookup")) {
                 this.renderControl(context);
             }
         } catch (error) {
@@ -231,36 +239,39 @@ export class LookupAsOptionSet implements ComponentFramework.StandardControl<IIn
     }
 
     private renderControl(context: ComponentFramework.Context<IInputs>) {
-        let recordId = context.parameters.lookup.raw != null && context.parameters.lookup.raw.length > 0 
-        ? context.parameters.lookup.raw[0].id 
-        : '---'
-
-        if(this.newlyCreatedId){
+    
+        let recordId = this._context.parameters.lookup.raw != null && this._context.parameters.lookup.raw.length > 0
+            ? this._context.parameters.lookup.raw[0].id
+            : '---';
+    
+        console.debug("Record ID:", recordId);
+    
+        if (this.newlyCreatedId) {
             recordId = this.newlyCreatedId;
             this.newlyCreatedId = null;
         }
-
-        if(context.parameters.sortByName.raw === "1"){
-            this.availableOptions = this.availableOptions.sort((n1,n2) => {
+    
+        if (context.parameters.sortByName.raw === "1") {
+            this.availableOptions = this.availableOptions.sort((n1, n2) => {
                 if (n1.text.toLowerCase() > n2.text.toLowerCase()) {
                     return 1;
                 }
-            
+    
                 if (n1.text.toLowerCase() < n2.text.toLowerCase()) {
                     return -1;
                 }
-            
+    
                 return 0;
-            })
+            });
         }
-
-        const searchOptions = this._context.parameters.addSearch.raw === "1" ? [ 
-            { key: 'FilterHeader', text: '-', itemType: DropdownMenuItemType.Header, data:{label: this._context.resources.getString("searchPlaceHolder")} },
+    
+        const searchOptions = this._context.parameters.addSearch.raw === "1" ? [
+            { key: 'FilterHeader', text: '-', itemType: DropdownMenuItemType.Header, data: { label: this._context.resources.getString("searchPlaceHolder") } },
             { key: 'divider_filterHeader', text: '-', itemType: DropdownMenuItemType.Divider }
         ] : [];
-
-        const options = [...searchOptions,{key: '---', text:'---'},...this.availableOptions];
-
+    
+        const options = [...searchOptions, { key: '---', text: '---' }, ...this.availableOptions];
+    
         const recordSelector = React.createElement("div", { className: "custom-dropdown" },
             React.createElement(SearchableDropdown, {
                 selectedKey: recordId,
@@ -282,9 +293,25 @@ export class LookupAsOptionSet implements ComponentFramework.StandardControl<IIn
                 }
             })
         );
-
+    
+        if (this.selectedValue != null && this.selectedValue.length > 0) {
+            // Add a delay of 2 seconds before setting the selected value
+            setTimeout(() => {
+                if (this.selectedValue) {
+                    this.currentValue = [{
+                        id: (this.selectedValue[0].id),
+                        name: this.selectedValue[0].name,
+                        entityType: this.entityName
+                    }];
+                    this.selectedValue = undefined; // Clear the selected value after using it
+                    this.notifyOutputChanged(); // Notify the framework of the change
+                }
+            }, 500); // Delay of 500ms (0.5 second)
+        }
+        
         ReactDom.render(recordSelector, this.container);
     }
+    
 
     /**
      * It is called by the framework prior to a control receiving new data.
