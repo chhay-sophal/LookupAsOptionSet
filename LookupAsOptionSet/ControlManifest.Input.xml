@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <manifest>
-  <control namespace="CRMCrate.LookupAsOptionSet" constructor="LookupAsOptionSet" version="0.0.1" display-name-key="Control_Display_Name_Key" description-key="Control_Description_Key" control-type="standard" >
+  <control namespace="CRMCrate.LookupAsOptionSet" constructor="LookupAsOptionSet" version="0.0.2" display-name-key="Control_Display_Name_Key" description-key="Control_Description_Key" control-type="standard" >
     <property name="lookup" display-name-key="lookup_Display_Key" description-key="lookup_Desc_Key" of-type="Lookup.Simple" usage="bound" required="true" />
     <property name="dependantLookup" display-name-key="dependantLookup_Display_Key" description-key="dependantLookup_Desc_Key" of-type="Lookup.Simple" usage="bound" required="false" />
     <property name="intersectEntityName" display-name-key="intersectEntityName_Display_Key" description-key="intersectEntityName_Desc_Key" of-type="SingleLine.Text" usage="input" required="false" />
